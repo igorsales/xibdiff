@@ -1,0 +1,73 @@
+#!/usr/bin/env ruby
+$:.unshift(File.dirname(__FILE__) + '/../lib') unless $:.include?(File.dirname(__FILE__) + '/../lib')
+
+require 'rubygems'
+require 'plist'
+require 'XibDiffObjectAdditions'
+require 'XibDiffLogger'
+require 'XibDiffXibComparison'
+
+include XibDiffXibComparison
+
+def print_usage
+  puts "Usage: XibDiff <file1.xib> <file2.xib> - Compares the Interface builder XIB or NIB files"
+end
+
+if ARGV.length != 2 or ARGV.include? '-h' or ARGV.include? '--help'
+  print_usage
+  exit 1
+end
+
+xib_xml = []
+ARGV.each do |filename| 
+  file = open("| ibtool --objects --classes --hierarchy --connections #{filename}")
+  content_xml = file.read
+  file.close
+
+  if content_xml.nil? 
+    raise "Error parsing #{filename}: '#{error}'"
+  else
+    
+    plist = Plist::parse_xml( content_xml )
+    if not plist['com.apple.ibtool.errors'].nil?
+      plist['com.apple.ibtool.errors'].each do |error|
+        STDERR.puts "Error parsing #{filename}: '#{error['description']}'"
+      end
+      exit 1
+    end
+    
+    xib_xml << plist
+  end
+end
+
+a_dict = dict_with_path_to_object_id( 
+  xib_xml[0]['com.apple.ibtool.document.hierarchy']
+)
+
+b_dict = dict_with_path_to_object_id( 
+  xib_xml[1]['com.apple.ibtool.document.hierarchy']
+)
+
+XibDiffLogger.push('Classes')
+compare_class_dicts( 
+  xib_xml[0]['com.apple.ibtool.document.classes'], 
+  xib_xml[1]['com.apple.ibtool.document.classes'])
+XibDiffLogger.pop
+
+XibDiffLogger.push('Hierarchy')
+compare_hierarchy_arrays( 
+  xib_xml[0]['com.apple.ibtool.document.hierarchy'], 
+  xib_xml[1]['com.apple.ibtool.document.hierarchy'])
+XibDiffLogger.pop
+
+XibDiffLogger.push('Objects')
+compare_object_arrays(
+  a_dict, xib_xml[0]['com.apple.ibtool.document.objects'], 
+  b_dict, xib_xml[1]['com.apple.ibtool.document.objects'])
+XibDiffLogger.pop
+
+XibDiffLogger.push('Connections')
+compare_connection_arrays(
+  a_dict.invert, xib_xml[0]['com.apple.ibtool.document.connections'], 
+  b_dict.invert, xib_xml[1]['com.apple.ibtool.document.connections'])
+XibDiffLogger.pop
