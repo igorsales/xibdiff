@@ -17,7 +17,7 @@ module XibDiffObjectComparison
   
     a_idxs.each do |a_idx|
       obj_name  = a_idx.to_s
-      obj_name += ":#{a[a_idx][var[:name_key]]}" if var[:name_key] and not a[a_idx][var[:name_key]].nil?
+      obj_name += ":#{a[a_idx][var[:name_key]]}" if var and var[:name_key] and a[a_idx] and a[a_idx][var[:name_key]]
       XibDiffLogger.push obj_name
       min_dist   = 0
       best_match = -1
