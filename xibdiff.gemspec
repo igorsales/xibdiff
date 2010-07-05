@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.description = %q{xibdiff is a ruby command-line tool to diff two nib or xib files.}
   s.email = ["self@igorsales.ca"]
   s.extra_rdoc_files = ["README.txt"]
-  s.files = ["README.txt", "Rakefile", "lib/XibDiffLogger.rb", "lib/XibDiffObjectAdditions.rb", "lib/XibDiffObjectComparison.rb", "lib/XibDiffXibComparison.rb"]
+  s.files = ["README.txt", "Rakefile", "lib/XibDiffLogger.rb", "lib/XibDiffObjectAdditions.rb", "lib/XibDiffObjectComparison.rb", "lib/XibDiffXibComparison.rb", "bin/xibdiff"]
   s.homepage = %q{http://github.com/igorsales/xibdiff}
   s.rdoc_options = ["--main", "README.txt"]
   s.require_paths = ["lib"]
