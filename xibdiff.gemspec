@@ -13,6 +13,8 @@ Gem::Specification.new do |s|
   s.files = ["README.txt", "Rakefile", "lib/XibDiffLogger.rb", "lib/XibDiffObjectAdditions.rb", "lib/XibDiffObjectComparison.rb", "lib/XibDiffXibComparison.rb", "bin/xibdiff"]
   s.homepage = %q{http://github.com/igorsales/xibdiff}
   s.rdoc_options = ["--main", "README.txt"]
+  s.bindir = 'bin'
+  s.executables << 'xibdiff'
   s.require_paths = ["lib"]
   s.rubyforge_project = %q{xibdiff}
   s.rubygems_version = %q{1.3.5}
